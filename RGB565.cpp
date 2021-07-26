@@ -1,39 +1,32 @@
 #include <iostream>
-#include <boost/array.hpp>
-#include <boost/asio.hpp>
+#include "udpclient.hpp"
 
-using boost::asio::ip::udp;
+using std::string;
+using std::cout;
+using std::endl;
 
-class UDPClient{
-public:
-	UDPClient(
-		boost::asio::io_service& io_service, 
-		const std::string& host, 
-		const std::string& port
-	) : io_service_(io_service), socket_(io_service, udp::endpoint(udp::v4(), 0)) {
-		udp::resolver resolver(io_service_);
-		udp::resolver::query query(udp::v4(), host, port);
-		udp::resolver::iterator iter = resolver.resolve(query);
-		endpoint_ = *iter;
+void make_command(string c, char* data){
+	if(data==nullptr){
+		cout<<"make_command get nullptr"<<endl;
+		return;
 	}
-
-	~UDPClient()
-	{
-		socket_.close();
+	if(c=="pic1"){
+		*data=0x00;// 第一部分数据
+	}else if(c=="pic2"){
+		*data=0x01;// 第二部分数据
+	}else if(c=="pic3"){
+		*data=0x02;// 第三部分数据
 	}
-
-	void send(const std::string& msg) {
-		socket_.send_to(boost::asio::buffer(msg, msg.size()), endpoint_);
+	else if(c=="pic_size"){
+		*data=0x03;// 图片大小 显示x 显示y
 	}
+	
+}
 
-	void send(void *data, size_t size) {
-		socket_.send_to(boost::asio::buffer(data, size), endpoint_);
-	}
-private:
-	boost::asio::io_service& io_service_;
-	udp::socket socket_;
-	udp::endpoint endpoint_;
-};
+void get_pic_size(const int &size,int &size_1,int &size_3){ //根据图片大小获取图片每个包的大小，一个图片分三个包发送,size2和size1相同
+	size_1 = size/3;
+	size_3 = size - 2*size_1;
+}
 
 
 int main()
@@ -43,4 +36,5 @@ int main()
 	char *p=new char[20];
 	strcpy(p,"hello");
 	client.send(p,5);
+	return 0;
 }
