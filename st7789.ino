@@ -11,7 +11,7 @@
 #include <Adafruit_GFX.h>     // Core graphics library
 #include <Adafruit_ST7789.h>  // Hardware-specific library for ST7789
 
-#include "picture.c" //the picture
+#include "pic.c" //the picture
 
 
 // ST7789 TFT module connections
@@ -55,7 +55,7 @@ void setup(void)
   // tft.print("C");
 
   tft.fillScreen(ST77XX_BLACK);
-  tft.drawRGBBitmap(0, 0, (uint16_t*)picture,256,174);
+  tft.drawRGBBitmap(0, 0, (uint16_t*)picture,240,240);
 }
 
 
