@@ -148,13 +148,15 @@ int main(int argc, char* argv[]){
     cout<<"input:"<<endl;
     std::cin >> a;
 	boost::asio::io_service io_service;
-	UDPClient client(io_service, "127.0.0.1", "2333");
+	UDPClient client(io_service, "192.168.4.1", "2333");
 
-    char* data_buffer = new char[BufferSize + 1];
+    char* data_buffer = new char[BufferSize*2 + 2];//留两个字节，否则esp8266有内存对齐问题
     for(int i=0;i<PackageNums;++i){
         make_command("pic",data_buffer,i);
-        memcpy(data_buffer + 1, data_c, BufferSize);
-        client.send(data_buffer,BufferSize+1);
+        memcpy(data_buffer + 2, data_c+i*BufferSize*2, BufferSize*2);
+        client.send(data_buffer,BufferSize*2+2);
+        cout<<"input:"<<endl;
+        std::cin >> a;
     }
 
 
